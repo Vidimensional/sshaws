@@ -1,0 +1,29 @@
+services:
+
+  sshaws:
+    build:
+      context: '.'
+      dockerfile: tests/etc/sshaws/Dockerfile
+    entrypoint: ["sleep", "5000000"]
+
+  proxy:
+    build:
+      context: tests/etc/proxy
+      dockerfile: Dockerfile
+    networks:
+      default:
+        aliases:
+        - ec2.amazonaws.com
+        - ec2.eu-west-1.amazonaws.com
+
+  localstack:
+    image: localstack/localstack
+    environment:
+    - HOST_TMP_FOLDER=/tmp/localstack
+    - DOCKER_HOST=unix:///var/run/docker.sock
+    - SERVICES=ec2
+    networks:
+      default:
+        aliases:
+        - localstack
+
